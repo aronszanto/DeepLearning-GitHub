@@ -111,10 +111,10 @@ def computeDOI(mip, u, r, params, alpha, beta):
     #print prox
     return alpha * API + beta * prox[0], API, prox
 
-def get_X_features(mip, mipnet, user, repo, mask):
+def get_X_features(mip, mipnet, user, repo, mask, params):
     x = []
     if mask[0]: # API from MIP-DOI
-        x += [mip.centrality[r] * 100] # scaled to %
+        x += [mip.centrality[repo] * 100] # scaled to %
     D = adamicAdarProximity(mipnet, user, repo, params)
     if mask[1]: # Distance all
         x += [D[0]]
@@ -151,7 +151,7 @@ def get_X_features(mip, mipnet, user, repo, mask):
     return np.array(x, dtype=np.float32)
 
 
-def construct_X_large(Y, mip, mipnet, users, repos, mask, samplesize=300):
+def construct_X_large(Y, mip, mipnet, users, repos, mask, params, user2idx, repo2idx, samplesize=300):
     '''
     Constructs a feature vector for each user,
     for the positives as well as large_samplesize other repos
@@ -168,9 +168,9 @@ def construct_X_large(Y, mip, mipnet, users, repos, mask, samplesize=300):
         false_vects = []
         for r in targets:
             # print u,r
-            true_vects.append((get_X_features(mip, mipnet, u, r, mask), repo2idx[r]))
+            true_vects.append((get_X_features(mip, mipnet, u, r, mask, params), repo2idx[r]))
         for r in samplerepos:
-            false_vects.append((get_X_features(mip, mipnet, u, r, mask), repo2idx[r]))
+            false_vects.append((get_X_features(mip, mipnet, u, r, mask, params), repo2idx[r]))
 
         X_large[user2idx[u]] = (true_vects, false_vects)
         if ix % 5 == 0:
