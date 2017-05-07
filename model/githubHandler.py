@@ -31,37 +31,26 @@ def get_all_interactions_for_timebucket(t, data, label_encodings):
     print "found", len(interactions), "interactions"
     return interactions
 
-def constructAutoEncoderData(udata, label_encs, current_set = 8):
-    action2idx = {"content_same": 0,
-                  "design_same": 1,
-                  "consume_same": 2,
-                  "content_diff": 3,
-                  "design_diff": 4,
-                  "consume_diff": 5,
-                  }
-
+def constructAutoEncoderData(udata, current_set = 8):
     all_lengths = []
     for ukey, u in udata.iteritems():
         current_acts = sum([1 if t <= current_set else 0 for t in u['time_buckets']])
         all_lengths.append(current_acts)
     # Make it so that most sequences are included, rest will be cut off
-    input_len = int(np.mean(all_lengths) * 1.5)
+    input_len = 50#int(np.mean(all_lengths))
     print input_len, "Number of sequence length for autoencoder"
     # 1. Construct padded input
-
     user_enc_name = []
     x = []
     for ukey, u in udata.iteritems():
         # Here will be change once we have diff/same data
-        x.append(np.array(([action2idx[label_encs[act] + "_same"] for act in u['actions']
-                            if label_encs[act] != "none"][:input_len])))
+        x.append(np.array(u['enc'][:input_len]))
         user_enc_name.append(ukey)
     x = sequence.pad_sequences(x, maxlen=input_len)
 
     x = np.array(x)
     y = to_categorical(x, num_classes=None).reshape(len(x), input_len, -1)
     return user_enc_name, x,y
-
 
 def connectionWeight(mip, n1,n2, gammas):
     '''
