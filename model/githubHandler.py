@@ -149,20 +149,22 @@ def construct_X_large(Y, mip, mipnet, users, repos, mask, params, user2idx, repo
     X_large = dict()
     for ix, u in enumerate(users):
         targets = Y[u].keys()
-        # Create first samples from uniform dist over all repos
-        samplerepos = np.random.choice(list(reposet - set(targets)),
-                                       samplesize, replace=False)
 
-        true_vects = []
-        false_vects = []
-        for r in targets:
-            # print u,r
-            true_vects.append((get_X_features(mip, mipnet, u, r, mask, params), repo2idx[r]))
-        for r in samplerepos:
-            false_vects.append((get_X_features(mip, mipnet, u, r, mask, params), repo2idx[r]))
+        if targets:
+            # Create first samples from uniform dist over all repos
+            samplerepos = np.random.choice(list(reposet - set(targets)),
+                                           samplesize, replace=False)
 
-        X_large[user2idx[u]] = (true_vects, false_vects)
-        if ix % 5 == 0:
+            true_vects = []
+            false_vects = []
+            for r in targets:
+                # print u,r
+                true_vects.append((get_X_features(mip, mipnet, u, r, mask, params), repo2idx[r]))
+            for r in samplerepos:
+                false_vects.append((get_X_features(mip, mipnet, u, r, mask, params), repo2idx[r]))
+
+            X_large[user2idx[u]] = (true_vects, false_vects)
+        if ix % 50 == 0:
             print ix
     return X_large
 
