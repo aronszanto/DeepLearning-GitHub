@@ -4,6 +4,7 @@ from collections import Counter, defaultdict
 
 """
 This file implements the MIPnet model which contains the graph of users and repos
+Research @ Harvard 2016 (Amir, Grosz)
 """
 
 class MIPnet():

@@ -5,8 +5,7 @@ from keras.preprocessing import sequence
 from keras.utils.np_utils import to_categorical
 
 """
-Defines a bunch of helper functions to handle data
-
+Defines a bunch of helper functions to handle data from the GitHub archive
 """
 
 def get_all_interactions_for_timebucket(t, data, label_encodings):
@@ -54,7 +53,7 @@ def constructAutoEncoderData(udata, current_set = 8):
 
 def connectionWeight(mip, n1,n2, gammas):
     '''
-    Compute the connections weight for all interaction types
+    Compute the connections weight for all interaction types for MIP-nets
     '''
     weights = np.zeros(4)
     for ednum,val in mip[n1][n2].iteritems():
@@ -67,7 +66,7 @@ def connectionWeight(mip, n1,n2, gammas):
 
 def adamicAdarProximity(mip, s, t, gammas):
     """
-    Compute the adamicAdarProximity given two nodes
+    Compute the Adamic-Adar proximity metric given two nodes
     """
 
     proximity = [0.,0., 0., 0.]
@@ -167,5 +166,3 @@ def construct_X_large(Y, mip, mipnet, users, repos, mask, params, user2idx, repo
         if ix % 50 == 0:
             print ix
     return X_large
-
-

@@ -41,6 +41,5 @@ class LSTMAuto():
     def train(self, x,y, epochs=20, batch_size=20):
         self.sequence_autoencoder.fit(x,y,epochs=epochs, batch_size=batch_size)
 
-
     def encode(self,x):
         return self.encoder.predict(x)
